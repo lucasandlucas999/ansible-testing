@@ -1,0 +1,12 @@
+---
+- name: Ping Test
+  hosts: all
+  gather_facts: no
+  
+  tasks:
+    - name: Ping all servers
+      ping:
+      
+    - name: Print success message
+      debug:
+        msg: "Successfully connected to {{ inventory_hostname }}"
