@@ -1,0 +1,38 @@
+---
+- name: Demostración de AWX - Playbook loco de diagnóstico y acción
+  hosts: all
+  become: true
+  gather_facts: yes
+
+  tasks:
+    - name: 🧪 Verificando conectividad con ping
+      ping:
+
+    - name: 🔍 Verificar si htop está instalado
+      shell: which htop
+      register: htop_check
+      ignore_errors: true
+
+    - name: 💾 Instalar htop si no está presente (solo en Rocky/RedHat)
+      when: htop_check.rc != 0 and ansible_os_family == "RedHat"
+      yum:
+        name: htop
+        state: present
+
+    - name: 🧠 Mostrar uso de memoria
+      shell: free -h
+      register: ram_info
+
+    - name: 📊 Mostrar carga del sistema
+      shell: uptime
+      register: load_info
+
+    - name: 📂 Crear archivo de registro con la hora actual
+      shell: "echo 'Ejecutado por AWX a las: $(date)' > /tmp/awx_log_{{ inventory_hostname }}.txt"
+
+    - name: 📜 Mostrar información del sistema
+      debug:
+        msg:
+          - "🚀 Host: {{ inventory_hostname }}"
+          - "🧠 RAM info: {{ ram_info.stdout_lines }}"
+          - "📊 Load: {{ load_info.stdout }}"
