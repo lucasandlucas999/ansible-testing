@@ -1,0 +1,13 @@
+---
+- name: Ver usuarios conectados con 'w'
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: Ejecutar el comando 'w'
+      ansible.builtin.command: w
+      register: salida_w
+
+    - name: Mostrar salida del comando 'w'
+      ansible.builtin.debug:
+        var: salida_w.stdout_lines
