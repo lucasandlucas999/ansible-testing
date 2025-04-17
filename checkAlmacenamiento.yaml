@@ -3,7 +3,6 @@
 - name: Verificar almacenamiento en hosts Rocky Linux
   hosts: all
   gather_facts: yes
-  become: yes
 
   tasks:
     - name: Comprobar que el host corre Rocky Linux
