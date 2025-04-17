@@ -5,6 +5,6 @@
 
   tasks:
     - name: Cambiar contraseña usando passwd --stdin
-      ansible.builtin.shell: echo "hola123" | passwd --stdin usuario
+      ansible.builtin.shell: echo "hola123" | passwd --stdin root
 
 
