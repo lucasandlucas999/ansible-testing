@@ -1,0 +1,9 @@
+- name: Cambiar contraseña con passwd --stdin
+  hosts: all
+  become: true
+  gather_facts: no
+
+  tasks:
+    - name: Cambiar contraseña usando passwd --stdin
+      ansible.builtin.shell: echo "hola123" | passwd --stdin usuario
+
