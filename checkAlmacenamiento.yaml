@@ -1,0 +1,38 @@
+---
+# check_storage.yml
+- name: Verificar almacenamiento en hosts Rocky Linux
+  hosts: all
+  gather_facts: yes
+  become: yes
+
+  tasks:
+    - name: Comprobar que el host corre Rocky Linux
+      ansible.builtin.assert:
+        that:
+          - ansible_distribution == "Rocky"
+        fail_msg: >
+          El host {{ inventory_hostname }} no es Rocky Linux
+        success_msg: >
+          {{ inventory_hostname }} efectivamente está en Rocky Linux
+
+    - name: Ejecutar 'df -h' para obtener uso de discos
+      ansible.builtin.command:
+        cmd: df -h --output=source,fstype,size,used,avail,pcent,target
+      register: df_output
+
+    - name: Mostrar resultados de almacenamiento
+      ansible.builtin.debug:
+        msg: |
+          --- Almacenamiento en {{ inventory_hostname }} ---
+          {{ df_output.stdout_lines | join('\n') }}
+
+    - name: (Alternativa) Detallar montajes desde facts
+      ansible.builtin.debug:
+        msg: |
+          Punto de montaje: {{ item.mount }}
+            • Tipo FS: {{ item.fstype }}
+            • Tamaño total: {{ (item.size_total // 1024 // 1024) }} MB
+            • Usado: {{ ((item.size_total - item.size_available) // 1024 // 1024) }} MB
+            • Disponible: {{ (item.size_available // 1024 // 1024) }} MB
+      loop: "{{ ansible_mounts }}"
+      when: ansible_mounts is defined
