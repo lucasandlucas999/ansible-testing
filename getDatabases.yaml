@@ -1,20 +1,20 @@
 ---
-- name: Mostrar bases de datos MySQL en todos los hosts
+- name: Mostrar bases de datos MySQL usando shell
   hosts: all
   gather_facts: no
+
   vars_prompt:
     - name: mysql_root_password
       prompt: "Contraseña del usuario root de MySQL"
       private: yes
 
   tasks:
-    - name: Ejecutar SHOW DATABASES
-      community.mysql.mysql_query:
-        login_user: root
-        login_password: "{{ mysql_root_password }}"
-        query: "SHOW DATABASES;"
-      register: result
+    - name: Ejecutar 'SHOW DATABASES;' usando el cliente mysql
+      shell: |
+        mysql -u root -p'{{ mysql_root_password }}' -e "SHOW DATABASES;"
+      register: query_output
+      changed_when: false
 
-    - name: Mostrar resultados
+    - name: Mostrar resultado
       debug:
-        var: result.query_result
+        var: query_output.stdout_lines
