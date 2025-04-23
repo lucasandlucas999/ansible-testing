@@ -1,0 +1,10 @@
+- hosts: all
+  become: true
+  vars:
+    usuario: "{{ usuario }}"
+    nueva_senha: "{{ nueva_senha | password_hash('sha512') }}"
+  tasks:
+    - name: Cambiar la contraseña del usuario
+      user:
+        name: "{{ usuario }}"
+        password: "{{ nueva_senha }}"
