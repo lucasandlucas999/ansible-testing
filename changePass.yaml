@@ -1,10 +1,29 @@
 - hosts: all
   become: true
+
+
+  vars_prompt:
+    - name: "usuario"
+      prompt: "Usuario al que cambiar la contraseña"
+      private: no
+
   vars:
     salt: "{{ lookup('password', '/dev/null length=16 chars=ascii_letters') }}"
-    hashed_pass: "{{ nueva_senha | password_hash('sha512', salt) }}"
+
+
+    derived_pass_plain: "{{ inventory_hostname[0:3] | upper }}info2025"
+
+
+    derived_pass_hash: "{{ derived_pass_plain | password_hash('sha512', salt) }}"
+
   tasks:
+    - name: Mostrar contraseña derivada (solo para DEBUG; quitar en prod)
+      debug:
+        msg:
+          - "Host: {{ inventory_hostname }}"
+          - "Contraseña plana: {{ derived_pass_plain }}"
+
     - name: Cambiar la contraseña del usuario
       user:
         name: "{{ usuario }}"
-        password: "{{ hashed_pass }}"
+        password: "{{ derived_pass_hash }}"
