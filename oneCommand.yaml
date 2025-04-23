@@ -1,0 +1,12 @@
+- hosts: all
+  become: true
+  vars:
+    comando: "{{ comando }}"
+  tasks:
+    - name: Ejecutar comando arbitrario del survey
+      ansible.builtin.shell: "{{ comando }}"
+      register: resultado
+
+    - name: Mostrar salida del comando
+      debug:
+        var: resultado.stdout_lines
